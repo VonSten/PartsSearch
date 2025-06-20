@@ -42,7 +42,7 @@ table 84401 "Picked Items Table"
         }
 
     }
-
+    // todo for each warehouse location
     procedure CreateSalesQuoteFromPickedItems(inLocationCode: Code[10])
     var
         SalesHeader: Record "Sales Header";

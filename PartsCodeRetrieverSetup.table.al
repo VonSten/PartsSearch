@@ -1,7 +1,6 @@
 table 84400 "Parts Code Retriever Setup"
 {
     Caption = 'Parts Code Retriever Setup';
-    //lookuppage id
 
     fields
     {

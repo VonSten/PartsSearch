@@ -17,7 +17,7 @@ report 84400 "Parts Code Retriever"
     var
         _SparePartItemGroup: Record SparePartItemGroup;
         _Item: Record Item;
-        Counter: Integer; // remove
+        Counter: Integer;
         PartNo: Code[50];
         _RequestError: Record "Request Error";
     begin
@@ -29,26 +29,21 @@ report 84400 "Parts Code Retriever"
                         if (StrPos(_Item.Description, ' ') > 0) then begin
                             PartNo := GetPartNo(_Item.Description);
                             if Partno <> '' then begin
-                                HttpRequestPartCodes(PartNo, _Item.Description);
-                                Counter := Counter + 1; // removeˇ
-
+                                HttpRequestPartCodes(PartNo, _Item.Description, _Item."No.", _Item."Base Unit of Measure");
+                                Counter := Counter + 1;
                             end;
                             Sleep(150);
                         end;
-                        if Counter >= 20 then // remove
-                            begin
-                            _RequestError.Reset();
-                            _RequestError.Init();
-                            _RequestError.Description := Format(CurrentDateTime());
-                            _RequestError.ErrorMessage := 'Finished with count: ' + Format(Counter);
-                            _RequestError.Insert();
-                            exit;
-                        end;
                     until _Item.Next() = 0;
             until _SparePartItemGroup.Next() = 0;
+        _RequestError.Reset();
+        _RequestError.Init();
+        _RequestError.Description := Format(CurrentDateTime());
+        _RequestError.ErrorMessage := 'Finished with count: ' + Format(Counter);
+        _RequestError.Insert();
     end;
 
-    local procedure HttpRequestPartCodes(partNo: text; partDescription: Text)
+    local procedure HttpRequestPartCodes(partNo: text; partDescription: Text; itemWarehouseNo: Code[20]; baseUnitOfMeasure: Code[10])
     var
         _Setup: Record "Parts Code Retriever Setup";
         _RequestError: Record "Request Error";
@@ -66,7 +61,7 @@ report 84400 "Parts Code Retriever"
         _oemDisplayNo: Text;
         _oemNoToken: JsonToken;
         _oemDisplayNoToken: JsonToken;
-        _tempReference: Record "Temp Reference Table"; // Later change to Item Reference table
+        _ItemReference: Record "Item Reference";
 
     begin
         _Setup.Get();
@@ -89,29 +84,33 @@ report 84400 "Parts Code Retriever"
         end;
         if not _response.Content().ReadAs(_jsonResponse) then
             exit;
-        //todo ainul esimene item
         if _jsonArray.ReadFrom(_jsonResponse) then begin
-            foreach _jsonToken in _jsonArray do begin
+            if _jsonArray.Count() > 0 then begin
+                _jsonArray.Get(0, _jsonToken);
+
                 if _jsonToken.AsObject().Get('oemNo', _oemNoToken) then begin
                     _oemArray := _oemNoToken.AsArray();
                     foreach _oemToken in _oemArray do begin
                         if _oemToken.AsObject().Get('oemDisplayNo', _oemDisplayNoToken) then begin
                             _oemDisplayNo := _oemDisplayNoToken.AsValue().AsText();
-                            if not _tempReference.Get(partNo, _oemDisplayNo) then begin
-                                _tempReference.Reset();
-                                _tempReference.Init();
-                                _tempReference.ItemNo := partNo;
-                                _tempReference.ReferenceNo := _oemDisplayNo;
-                                _tempReference.Description := partDescription;
-                                _tempReference.Insert();
+                            if not _ItemReference.Get(itemWarehouseNo, '', baseUnitOfMeasure, _ItemReference."Reference Type"::Vendor, 'XTECDOCAPI', _oemDisplayNo) then begin
+                                _ItemReference.Reset();
+                                _ItemReference.Init();
+                                _ItemReference."Reference No." := _oemDisplayNo;
+                                _ItemReference."Reference Type" := _ItemReference."Reference Type"::Vendor;
+                                _ItemReference."Reference Type No." := 'XTECDOCAPI';
+                                _ItemReference."Item No." := itemWarehouseNo;
+                                _ItemReference.Description := partDescription;
+                                _ItemReference."Unit of Measure" := baseUnitOfMeasure;
+                                _ItemReference.Insert();
                             end;
                         end;
                     end;
                 end;
-            end;
-        end
-        else
-            exit;
+            end
+            else
+                exit;
+        end;
     end;
 
     local procedure GetPartNo(partDescription: Text): Text
