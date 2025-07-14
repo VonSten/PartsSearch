@@ -18,7 +18,7 @@ report 84400 "Parts Code Retriever"
         _SparePartItemGroup: Record SparePartItemGroup;
         _Item: Record Item;
         Counter: Integer;
-        PartNo: Code[50];
+        PartNo: Text;
         _RequestError: Record "Request Error";
     begin
         if _SparePartItemGroup.FindSet() then
@@ -29,6 +29,7 @@ report 84400 "Parts Code Retriever"
                         if (StrPos(_Item.Description, ' ') > 0) then begin
                             PartNo := GetPartNo(_Item.Description);
                             if Partno <> '' then begin
+                                SaveOemNumber(_Item."No.", PartNo);
                                 HttpRequestPartCodes(PartNo, _Item.Description, _Item."No.", _Item."Base Unit of Measure");
                                 Counter := Counter + 1;
                             end;
@@ -118,7 +119,7 @@ report 84400 "Parts Code Retriever"
         _HttpClient: HttpClient;
         _OpenAIHost: Label 'https://api.openai.com/v1/responses';
         _OpenAIKKey: Label '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';
-        _Content: Label 'Extract OEM part numbers (i.e., vehicle manufacturer-specific codes) from the input text string. Known OEM vehicle manufacturers include: Solaris, VW, VAG, Renault, Volvo, MAN, Mercedes-Benz, Scania, Isuzu, Citroën, Ford, and other automobile or truck manufacturers. You may include other recognized car/truck makers if clearly identifiable. Ignore and do not return any third-party spare part numbers, such as from: ZF, Knorr, Wabco, Bosch, Febi, Textar, etc. A part number is valid only if it''s tied to a vehicle manufacturer (OEM). If the string contains multiple OEM part numbers, return only the first. Keep the exact formatting (dashes, spaces, or prefixes like ''A'') of the OEM part number. If no OEM part number is found, return an empty string. Examples of valid OEM part numbers: 303496 (Scania) 2K5698151E (VW/VAG) 36.25514-0038 (MAN) OPTI-030-400 (Solaris) 9064202385, A9064203085 (Mercedes-Benz) 1444CZ (Citroën) 22033561 (Volvo) 1322152 (Ford) 226A42790R (Renault) Do not return part numbers that appear with or near the keywords: ZF, Knorr, Wabco, Bosch, Febi, Textar, or any other known 3rd party spare parts brands — even if the format resembles an OEM part number. If a part number is followed or preceded by ZF, Knorr, or similar, consider it 3rd party and ignore it. Do not return anything from a string where all numbers are associated with 3rd party brands.';
+        _Content: Label 'Extract OEM part numbers (i.e., vehicle manufacturer-specific codes) from the input text string. Known OEM vehicle manufacturers include: Solaris, VW, VAG, Renault, Volvo, MAN, Mercedes-Benz, Scania, Isuzu, Citroën, Ford, and other automobile or truck manufacturers. You may include other recognized car/truck makers if clearly identifiable. Ignore and do not return any third-party spare part numbers, such as from: ZF, Knorr, Wabco, Bosch, Febi, Textar, etc. A part number is valid only if it''s tied to a vehicle manufacturer (OEM). If the string contains multiple OEM part numbers, return only the first. Keep the exact formatting (dashes, spaces, or prefixes like ''A'') of the OEM part number. If no OEM part number is found, return an empty string. Examples of valid OEM part numbers: 303496 (Scania) 2K5698151E (VW/VAG) 36.25514-0038 (MAN) OPTI-030-400 (Solaris) 9064202385, A9064203085 (Mercedes-Benz) 1444CZ (Citroën) 22033561 (Volvo) 1322152 (Ford) 226A42790R (Renault) Do not return part numbers that appear with or near the keywords: ZF, Knorr, Wabco, Bosch, Febi, Textar, or any other known 3rd party spare parts brands — even if the format resembles an OEM part number. If a part number is followed or preceded by ZF, Knorr, or similar, consider it 3rd party and ignore it. Do not return anything from a string where all numbers are associated with 3rd party brands. Only answer with part number or empty string';
         _Headers: HttpHeaders;
         _Response: Text;
         _OpenAIModel: Label 'gpt-4o-mini';
@@ -177,6 +178,19 @@ report 84400 "Parts Code Retriever"
         end;
         exit('');
 
+    end;
+
+    local procedure SaveOemNumber(itemNo: Code[20]; OEMNo: Text);
+    var
+        _OemNumbersForItems: Record "Oem Numbers for Items";
+    begin
+        _OemNumbersForItems.Reset();
+        if not _OemNumbersForItems.Get(itemNo) then begin
+            _OemNumbersForItems.Init();
+            _OemNumbersForItems.ItemNo := itemNo;
+            _OemNumbersForItems.OemNumber := OEMNo;
+            _OemNumbersForItems.Insert();
+        end;
     end;
 
 }
