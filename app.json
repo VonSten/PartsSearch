@@ -1,33 +1,33 @@
 {
-  "id": "9ba566e4-6f02-41be-94c0-19dfb1dcf363",
-  "name": "Parts catalogue improver",
-  "publisher": "Default Publisher",
-  "version": "1.0.0.0",
-  "brief": "",
-  "description": "",
-  "privacyStatement": "",
-  "EULA": "",
-  "help": "",
-  "url": "",
-  "logo": "",
-  "dependencies": [],
-  "screenshots": [],
-  "platform": "1.0.0.0",
-  "application": "25.0.0.0",
-  "idRanges": [
-    {
-      "from": 84400,
-      "to": 84499
-    }
-  ],
-  "resourceExposurePolicy": {
-    "allowDebugging": false,
-    "allowDownloadingSource": false,
-    "includeSourceInSymbolFile": false,
-    "applyToDevExtension": false
-  },
-  "runtime": "14.0",
-  "features": [
-    "NoImplicitWith"
-  ]
+    "id": "9ba566e4-6f02-41be-94c0-19dfb1dcf363",
+    "name": "Spare parts utility",
+    "publisher": "TLT",
+    "version": "1.2.0.0",
+    "brief": "",
+    "description": "",
+    "privacyStatement": "",
+    "EULA": "",
+    "help": "",
+    "url": "",
+    "logo": "",
+    "dependencies": [],
+    "screenshots": [],
+    "platform": "1.0.0.0",
+    "application": "25.5.30849.31109",
+    "idRanges": [
+        {
+            "from": 84400,
+            "to": 84499
+        }
+    ],
+    "resourceExposurePolicy": {
+        "allowDebugging": true,
+        "allowDownloadingSource": true,
+        "includeSourceInSymbolFile": true,
+        "applyToDevExtension": false
+    },
+    "runtime": "14.0",
+    "features": [
+        "NoImplicitWith"
+    ]
 }

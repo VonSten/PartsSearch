@@ -1,5 +1,6 @@
 page 84402 "Part Search Card"
 {
+    /*
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Administration;
@@ -113,6 +114,6 @@ page 84402 "Part Search Card"
                 _PikedItemsTable.CreateSalesQuoteFromPickedItems(Location);
         end;
     end;
-
+*/
 
 }

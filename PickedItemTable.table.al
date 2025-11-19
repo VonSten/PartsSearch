@@ -1,5 +1,7 @@
+/*
 table 84401 "Picked Items Table"
 {
+
     Caption = 'Picked Items Table';
 
     fields
@@ -73,3 +75,4 @@ table 84401 "Picked Items Table"
     end;
 
 }
+*/

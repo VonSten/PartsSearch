@@ -1,5 +1,7 @@
 page 84403 "Part Search List Page"
 {
+
+    /*
     PageType = ListPart;
     UsageCategory = Lists;
     SourceTable = Item;
@@ -34,15 +36,14 @@ page 84403 "Part Search List Page"
                             exit;
                         end;
                         if Confirm(StrSubstNo(_Kinnitus, Rec.Description)) then
-                            if (Rec.Inventory > 0) then begin
-                                _PickedItem.Init();
-                                _PickedItem.Validate("Item No.", Rec."No.");
-                                _PickedItem.Validate(Description, Rec.Description);
-                                _PickedItem.Validate("User ID", UserId());
-                                _PickedItem.Validate("Quantity", 1.0);
-                                _PickedItem.Insert();
-                                CurrPage.Update(false);
-                            end
+                        _PickedItem.Init();
+                        _PickedItem.Validate("Item No.", Rec."No.");
+                        _PickedItem.Validate(Description, Rec.Description);
+                        _PickedItem.Validate("User ID", UserId());
+                        _PickedItem.Validate("Quantity", 1.0);
+                        _PickedItem.Insert();
+                        CurrPage.Update(false);
+
                     end;
 
                 }
@@ -138,6 +139,6 @@ page 84403 "Part Search List Page"
     begin
         SearchText := '';
     end;
-
+*/
 
 }

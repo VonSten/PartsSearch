@@ -1,5 +1,6 @@
 page 84404 "Picked Items List"
 {
+    /*
     PageType = ListPart;
     UsageCategory = Lists;
     SourceTable = "Picked Items Table";
@@ -35,5 +36,5 @@ page 84404 "Picked Items List"
     begin
         Rec.SetRange("User ID", UserId());
     end;
-
+*/
 }

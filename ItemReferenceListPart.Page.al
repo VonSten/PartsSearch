@@ -1,7 +1,7 @@
 page 84400 "Item Reference List Part"
 {
+    /*
     PageType = ListPart;
-    ApplicationArea = All;
     UsageCategory = Lists;
     SourceTable = "Item Reference";
     InsertAllowed = false;
@@ -55,5 +55,6 @@ page 84400 "Item Reference List Part"
         end;
         CurrPage.Update(false);
     end;
+    */
 }
 

@@ -25,7 +25,4 @@ table 84404 "Oem Numbers for Items"
             Clustered = true;
         }
     }
-
-
-
 }
