@@ -2,7 +2,7 @@
     "id": "9ba566e4-6f02-41be-94c0-19dfb1dcf363",
     "name": "Spare parts utility",
     "publisher": "TLT",
-    "version": "1.2.0.0",
+    "version": "2025.11.20.1",
     "brief": "",
     "description": "",
     "privacyStatement": "",
@@ -13,7 +13,7 @@
     "dependencies": [],
     "screenshots": [],
     "platform": "1.0.0.0",
-    "application": "25.5.30849.31109",
+    "application": "26.0.0.0",
     "idRanges": [
         {
             "from": 84400,

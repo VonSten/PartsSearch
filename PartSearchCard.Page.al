@@ -1,15 +1,41 @@
 page 84402 "Part Search Card"
 {
-    /*
+
     PageType = Card;
     ApplicationArea = All;
-    UsageCategory = Administration;
+    UsageCategory = Lists;
     Caption = 'Varuosade otsing';
 
     layout
     {
         area(Content)
+
         {
+            field(Location; Location)
+            {
+                ApplicationArea = All;
+                Caption = 'Lao kood';
+                ToolTip = 'Lao kood';
+                TableRelation = Location;
+                ShowMandatory = true;
+                trigger OnValidate()
+                begin
+                    InitializeOrUpdatePickedItemsHeader();
+                end;
+            }
+            field(SellToCustomerNo; SellToCustomerNo)
+            {
+                ApplicationArea = All;
+                Caption = 'Kliendi kood';
+                ToolTip = 'Kliendi kood';
+                TableRelation = Customer;
+                ShowMandatory = true;
+                trigger OnValidate()
+                begin
+                    InitializeOrUpdatePickedItemsHeader();
+                end;
+            }
+
             group(Filter)
             {
                 field(SearchText; SearchText)
@@ -19,17 +45,11 @@ page 84402 "Part Search Card"
                     ToolTip = 'Otsi varuosi OEM koodi, kirjelduse või laokoodi järgi';
                     trigger OnValidate()
                     begin
-                        SearchParts(Searchtext);
+                        SearchParts(SearchText, Location);
                     end;
                 }
             }
-            field(Location; Location)
-            {
-                ApplicationArea = All;
-                Caption = 'Lao kood';
-                ToolTip = 'Lao kood';
-                TableRelation = Location;
-            }
+
             part(PickedItemsList; "Picked Items List")
             {
                 ApplicationArea = All;
@@ -55,8 +75,8 @@ page 84402 "Part Search Card"
             action(CreateSalesQuote)
             {
                 ApplicationArea = All;
-                Caption = 'Loo müügitellimus';
-                ToolTip = 'Loo müügitellimus valitud osadest';
+                Caption = 'Loo müügipakkumine';
+                ToolTip = 'Loo müügipakkumine valitud osadest';
                 Promoted = true;
                 trigger OnAction()
                 begin
@@ -84,21 +104,29 @@ page 84402 "Part Search Card"
                         _PickedItems.DeleteAll();
                         CurrPage.Update(false);
                     end;
+                    DeletePickedItemsHeader();
                 end;
             }
         }
+
     }
 
     var
         SearchText: Text;
         Location: Code[10];
+        SellToCustomerNo: Code[20];
 
-    local procedure SearchParts(inSearchtext: Text)
+    trigger OnOpenPage()
+    begin
+        LoadPickedItemsHeader();
+    end;
+
+    local procedure SearchParts(inSearchtext: Text; InLocationCode: Code[10])
     var
         _ItemReference: Record "Item Reference" temporary;
         _ItemFilter: Text;
     begin
-        _ItemFilter := CurrPage.ItemList.Page.SearchParts(inSearchtext);
+        _ItemFilter := CurrPage.ItemList.Page.SearchParts(inSearchtext, InLocationCode);
         CurrPage.ReferenceList.Page.filterReferences(_ItemFilter);
         CurrPage.Update(false);
     end;
@@ -110,10 +138,59 @@ page 84402 "Part Search Card"
 
     begin
         if Location <> '' then begin
-            if Confirm('Kas soovid müügitellimuse sisestada?', true) then
-                _PikedItemsTable.CreateSalesQuoteFromPickedItems(Location);
+            if Confirm('Kas soovid müügipakkumise sisestada?', true) then begin
+                _PikedItemsTable.CreateSalesQuoteFromPickedItems();
+                CurrPage.Close();
+            end;
         end;
     end;
-*/
+
+    local procedure InitializeOrUpdatePickedItemsHeader()
+    var
+        _PickedItemsHeader: Record "PickedItemsHeader";
+
+    begin
+        _PickedItemsHeader.SetRange(UserID, UserId());
+        if _PickedItemsHeader.FindFirst() then begin
+            _PickedItemsHeader.Validate(SellToCustomerNo, SellToCustomerNo);
+            _PickedItemsHeader.Validate(LocationCode, Location);
+            _PickedItemsHeader.Modify();
+        end else begin
+            _PickedItemsHeader.Init();
+            _PickedItemsHeader.Validate(SellToCustomerNo, SellToCustomerNo);
+            _PickedItemsHeader.Validate(LocationCode, Location);
+            _PickedItemsHeader.Validate(UserID, UserId());
+            _PickedItemsHeader.Insert();
+        end;
+
+    end;
+
+    local procedure DeletePickedItemsHeader()
+    var
+        _PickedItemsHeader: Record "PickedItemsHeader";
+
+    begin
+        _PickedItemsHeader.SetRange(UserID, UserId());
+        if _PickedItemsHeader.FindFirst() then begin
+            _PickedItemsHeader.Delete();
+        end;
+        Location := '';
+        SellToCustomerNo := '';
+        SearchText := '';
+        CurrPage.Update(false);
+    end;
+
+    local procedure LoadPickedItemsHeader()
+    var
+        _PickedItemsHeader: Record "PickedItemsHeader";
+    begin
+        _PickedItemsHeader.SetRange(UserID, UserId());
+        if _PickedItemsHeader.FindFirst() then begin
+            SellToCustomerNo := _PickedItemsHeader.SellToCustomerNo;
+            Location := _PickedItemsHeader.LocationCode;
+            CurrPage.Update(false);
+        end;
+    end;
+
 
 }

@@ -1,4 +1,4 @@
-/*
+
 table 84401 "Picked Items Table"
 {
 
@@ -45,17 +45,24 @@ table 84401 "Picked Items Table"
 
     }
     // todo for each warehouse location
-    procedure CreateSalesQuoteFromPickedItems(inLocationCode: Code[10])
+    procedure CreateSalesQuoteFromPickedItems()
     var
         SalesHeader: Record "Sales Header";
         SalesLine: Record "Sales Line";
         PickedItem: Record "Picked Items Table";
+        SalesLineNo: Integer;
+        PickedItemHeader: Record "PickedItemsHeader";
     begin
-        // Header    
+        // Header
+        PickedItemHeader.SetRange(UserID, UserId());
+        if not PickedItemHeader.FindFirst() then
+            exit;
         SalesHeader.Init();
         SalesHeader."Document Type" := SalesHeader."Document Type"::Quote;
-        SalesHeader."Location Code" := inLocationCode;
+        Salesheader.Validate("Sell-to Customer No.", PickedItemHeader.SellToCustomerNo);
         SalesHeader."Salesperson Code" := UserId();
+        SalesHeader."Location Code" := PickedItemHeader.LocationCode;
+        SalesLineNo := 10000;
         SalesHeader.Insert(true);
 
         // Content
@@ -63,16 +70,19 @@ table 84401 "Picked Items Table"
         if PickedItem.FindSet() then
             repeat
                 SalesLine.Init();
-                SalesLine."Document Type" := SalesHeader."Document Type";
-                SalesLine."Document No." := SalesHeader."No.";
-                SalesLine.Type := SalesLine.Type::Item;
-                SalesLine."No." := PickedItem."Item No.";
-                SalesLine.Quantity := PickedItem.Quantity;
-                SalesLine.Description := PickedItem.Description;
-                SalesLine.Insert();
+                SalesLine.Validate("Document Type", SalesHeader."Document Type");
+                SalesLine.Validate("Document No.", SalesHeader."No.");
+                SalesLine.Validate(Type, SalesLine.Type::Item);
+                SalesLine.Validate("No.", PickedItem."Item No.");
+                SalesLine.Validate(Quantity, PickedItem.Quantity);
+                SalesLine.Validate("Sell-to Customer No.", SalesHeader."Sell-to Customer No.");
+                SalesLine.Validate("Line No.", SalesLineNo);
+                SalesLine."Location Code" := PickedItemHeader.LocationCode;
+                SalesLine.Insert(true);
+                SalesLineNo += 10000;
             until PickedItem.Next() = 0;
 
+        Page.Run(Page::"Sales Quote", SalesHeader);
     end;
 
 }
-*/

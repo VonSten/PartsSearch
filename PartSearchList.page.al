@@ -1,7 +1,7 @@
 page 84403 "Part Search List Page"
 {
 
-    /*
+
     PageType = ListPart;
     UsageCategory = Lists;
     SourceTable = Item;
@@ -36,7 +36,7 @@ page 84403 "Part Search List Page"
                             exit;
                         end;
                         if Confirm(StrSubstNo(_Kinnitus, Rec.Description)) then
-                        _PickedItem.Init();
+                            _PickedItem.Init();
                         _PickedItem.Validate("Item No.", Rec."No.");
                         _PickedItem.Validate(Description, Rec.Description);
                         _PickedItem.Validate("User ID", UserId());
@@ -82,7 +82,7 @@ page 84403 "Part Search List Page"
     var
         SearchText: Text;
 
-    procedure SearchParts(inSearchtext: Text): Text;
+    procedure SearchParts(inSearchtext: Text; inLocationCode: Code[10]): Text;
     var
         _Item: Record Item;
         _ItemReference: Record "Item Reference";
@@ -91,7 +91,7 @@ page 84403 "Part Search List Page"
     begin
         inSearchtext := inSearchtext.Trim();
         Rec.Reset();
-        //_ItemReference.Reset();
+        _ItemReference.Reset();
         if Rec.IsTemporary() then
             Rec.DeleteAll();
         _Item.Reset();
@@ -123,6 +123,7 @@ page 84403 "Part Search List Page"
                     end;
                 end;
             until _ItemReference.Next() = 0;
+
         if Rec.FindSet() then
             repeat
                 if _ItemFilter <> '' then
@@ -130,7 +131,6 @@ page 84403 "Part Search List Page"
                 _ItemFilter += Rec."No.";
             until Rec.Next() = 0;
         SearchText := '';
-        CurrPage.Update(false);
         exit(_ItemFilter);
     end;
 
@@ -139,6 +139,6 @@ page 84403 "Part Search List Page"
     begin
         SearchText := '';
     end;
-*/
+
 
 }
