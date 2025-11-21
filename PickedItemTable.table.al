@@ -44,7 +44,6 @@ table 84401 "Picked Items Table"
         }
 
     }
-    // todo for each warehouse location
     procedure CreateSalesQuoteFromPickedItems()
     var
         SalesHeader: Record "Sales Header";
@@ -52,6 +51,7 @@ table 84401 "Picked Items Table"
         PickedItem: Record "Picked Items Table";
         SalesLineNo: Integer;
         PickedItemHeader: Record "PickedItemsHeader";
+        PartSearchCardPage: Page "Part Search Card";
     begin
         // Header
         PickedItemHeader.SetRange(UserID, UserId());
@@ -61,9 +61,11 @@ table 84401 "Picked Items Table"
         SalesHeader."Document Type" := SalesHeader."Document Type"::Quote;
         Salesheader.Validate("Sell-to Customer No.", PickedItemHeader.SellToCustomerNo);
         SalesHeader."Salesperson Code" := UserId();
-        SalesHeader."Location Code" := PickedItemHeader.LocationCode;
-        SalesLineNo := 10000;
         SalesHeader.Insert(true);
+        SalesHeader.Validate("Location Code", PickedItemHeader.LocationCode);
+        SalesHeader.Modify(true);
+
+        SalesLineNo := 10000;
 
         // Content
         PickedItem.SetRange("User ID", UserId());
@@ -81,7 +83,7 @@ table 84401 "Picked Items Table"
                 SalesLine.Insert(true);
                 SalesLineNo += 10000;
             until PickedItem.Next() = 0;
-
+        PartSearchCardPage.clearSearch();
         Page.Run(Page::"Sales Quote", SalesHeader);
     end;
 

@@ -29,7 +29,6 @@ page 84402 "Part Search Card"
                 Caption = 'Kliendi kood';
                 ToolTip = 'Kliendi kood';
                 TableRelation = Customer;
-                ShowMandatory = true;
                 trigger OnValidate()
                 begin
                     InitializeOrUpdatePickedItemsHeader();
@@ -96,15 +95,15 @@ page 84402 "Part Search Card"
                 trigger OnAction()
                 var
                     _Confirm: Label 'Kas soovid nimekirja tühjendada?';
-                    _PickedItems: Record "Picked Items Table";
+
                 begin
                     if Confirm(_Confirm) then begin
-                        _PickedItems.Reset();
-                        _PickedItems.SetRange("User ID", UserId());
-                        _PickedItems.DeleteAll();
+                        clearSearch();
+                        CurrPage.ItemList.Page.DelCurrRec();
                         CurrPage.Update(false);
+
                     end;
-                    DeletePickedItemsHeader();
+
                 end;
             }
         }
@@ -119,6 +118,20 @@ page 84402 "Part Search Card"
     trigger OnOpenPage()
     begin
         LoadPickedItemsHeader();
+    end;
+
+    procedure clearSearch()
+    var
+        _PickedItems: Record "Picked Items Table";
+        _ItemReference: Record "Item Reference" temporary;
+    begin
+        _PickedItems.Reset();
+        _PickedItems.SetRange("User ID", UserId());
+        _PickedItems.DeleteAll();
+        DeletePickedItemsHeader();
+        _ItemReference.Reset();
+
+
     end;
 
     local procedure SearchParts(inSearchtext: Text; InLocationCode: Code[10])
@@ -137,6 +150,9 @@ page 84402 "Part Search Card"
         _PikedItemsTable: Record "Picked Items Table";
 
     begin
+        if SellToCustomerNo = '' then begin
+            Error('Palun määra kliendi kood enne müügipakkumise loomist.');
+        end;
         if Location <> '' then begin
             if Confirm('Kas soovid müügipakkumise sisestada?', true) then begin
                 _PikedItemsTable.CreateSalesQuoteFromPickedItems();
