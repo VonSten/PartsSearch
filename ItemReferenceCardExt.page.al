@@ -1,4 +1,4 @@
-page 84410 "Item Referenece Card"
+page 84410 "Item Referenece Card EXT"
 {
     PageType = "CardPart";
     ApplicationArea = All;
