@@ -21,6 +21,7 @@ page 84402 "Part Search Card"
                 trigger OnValidate()
                 begin
                     InitializeOrUpdatePickedItemsHeader();
+                    SearchParts(SearchText, Location);
                 end;
             }
             field(SellToCustomerNo; SellToCustomerNo)
@@ -76,7 +77,9 @@ page 84402 "Part Search Card"
                 ApplicationArea = All;
                 Caption = 'Loo müügipakkumine';
                 ToolTip = 'Loo müügipakkumine valitud osadest';
+                PromotedIsBig = true;
                 Promoted = true;
+                PromotedCategory = Process;
                 trigger OnAction()
                 begin
                     CreateSalesQuoteFromParts();

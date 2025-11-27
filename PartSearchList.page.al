@@ -81,6 +81,7 @@ page 84403 "Part Search List Page"
 
     var
         SearchText: Text;
+        LocationCode: Code[10];
 
     procedure SearchParts(inSearchtext: Text; inLocationCode: Code[10]): Text;
     var
@@ -90,6 +91,7 @@ page 84403 "Part Search List Page"
         _ItemFilterCounter: Integer;
 
     begin
+        LocationCode := inLocationCode;
         inSearchtext := inSearchtext.Trim();
         Rec.Reset();
         _ItemReference.Reset();
@@ -133,13 +135,6 @@ page 84403 "Part Search List Page"
                 if _ItemFilterCounter > 2000 then
                     break; // Up to 2100 records per filter supported
             until Rec.Next() = 0;
-        //todo this block
-        if inLocationCode <> '' then begin
-            Rec.Reset();                           // keeps temp records, clears filters
-            Rec.SetRange("Location Filter", inLocationCode); // FlowFilter, not real field
-        end;
-
-        SearchText := '';
         exit(_ItemFilter);
     end;
 
@@ -153,6 +148,14 @@ page 84403 "Part Search List Page"
     begin
         if Rec.IsTemporary() then
             Rec.DeleteAll();
+    end;
+
+    trigger OnAfterGetRecord()
+    begin
+        Rec.SetRange("Location Filter");
+        if LocationCode <> '' then
+            Rec.SetRange("Location Filter", LocationCode);
+        Rec.CalcFields(Inventory);
     end;
 
 }
