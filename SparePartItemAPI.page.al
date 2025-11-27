@@ -54,11 +54,22 @@ page 84408 "Spare Part Items"
 
                 }
 
+                field(Inventory; Rec.Inventory)
+                {
+                }
+
+                field(location; Rec."Location Filter")
+                {
+
+                }
+
 
 
             }
         }
     }
+
+
 
     Trigger OnOpenPage()
     var
@@ -76,6 +87,9 @@ page 84408 "Spare Part Items"
                 Rec.SetFilter("Item Category Code", CategoryFilter);
         end;
     end;
+
+
+
 }
 
 
