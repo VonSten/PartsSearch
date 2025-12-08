@@ -4,9 +4,9 @@ permissionset 84400 PartSearch
 {
     Assignable = true;
     Permissions = tabledata "Parts Code Retriever Setup" = RIMD,
-        //tabledata "Picked Items Table" = RIMD,
+    //tabledata "Picked Items Table" = RIMD,
         table "Parts Code Retriever Setup" = X,
-        //table "Picked Items Table" = X,
+    //table "Picked Items Table" = X,
         report "Parts Code Retriever" = X,
         page "Item Reference List Part" = X,
         page "Part Search Card" = X,
@@ -21,5 +21,12 @@ permissionset 84400 PartSearch
         table SparePartItemGroup = X,
         page "Oem Numbers for Items" = X,
         page "Request Error" = X,
-        page SparePartItemGroup = X;
+        page SparePartItemGroup = X,
+        tabledata "Picked Items Table" = RIMD,
+        tabledata PickedItemsHeader = RIMD,
+        table "Picked Items Table" = X,
+        table PickedItemsHeader = X,
+        page "Item Referenece Card" = X,
+        page ItemReferences = X,
+        page "Spare Part Items" = X;
 }
