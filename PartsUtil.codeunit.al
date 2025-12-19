@@ -107,4 +107,20 @@ codeunit 84400 PartsUtil
         end;
         Message(doneLabel);
     end;
+
+    [EventSubscriber(ObjectType::Table, Database::Item, 'OnAfterOnInsert', '', false, false)]
+    local procedure OnAfterOnInsert(var Item: Record Item; var xItem: Record Item)
+    var
+        PartsUtil: Codeunit "PartsUtil";
+    begin
+        PartsUtil.CreateItemReferenceWithoutPunctuation(Item);
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::Item, 'OnModifyOnBeforePlanningAssignmentItemChange', '', false, false)]
+    local procedure OnAfterOnModify(var Item: Record Item; xItem: Record Item; PlanningAssignment: Record "Planning Assignment"; var IsHandled: Boolean)
+    var
+        PartsUtil: Codeunit "PartsUtil";
+    begin
+        PartsUtil.CreateItemReferenceWithoutPunctuation(Item);
+    end;
 }
