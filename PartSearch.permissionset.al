@@ -28,5 +28,6 @@ permissionset 84400 PartSearch
         table PickedItemsHeader = X,
         page "Item Referenece Card" = X,
         page ItemReferences = X,
-        page "Spare Part Items" = X;
+        page "Spare Part Items" = X,
+        codeunit PartsUtil = X;
 }

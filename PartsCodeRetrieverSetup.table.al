@@ -1,6 +1,6 @@
 table 84400 "Parts Code Retriever Setup"
 {
-    Caption = 'Parts Code Retriever Setup';
+    Caption = 'Spare Part Utility Setup';
 
     fields
     {
@@ -21,6 +21,10 @@ table 84400 "Parts Code Retriever Setup"
         {
             Caption = 'API Key';
         }
+        field(5; TextReplaceValues; Text[250])
+        {
+            Caption = 'Search and replace values for descriptions';
+        }
     }
 
     keys
@@ -30,5 +34,8 @@ table 84400 "Parts Code Retriever Setup"
             Clustered = true;
         }
     }
+
+
+
 }
 
